@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lecture_2/views/screens/login_screen.dart';
 import 'views/screens/home_screen.dart';
 import 'helpers/constants.dart';
 
@@ -12,7 +13,10 @@ class HomeApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: appName,
-      home: HomeScreen(),
+      routes: {
+        '/': (_) => HomeScreen(),
+        '/login': (_) => LoginScreen(),
+      },
     );
   }
 }

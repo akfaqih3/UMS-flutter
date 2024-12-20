@@ -43,9 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-        child: Text(
-          appAuthor,
-          style: TextStyle(color: dark),
+        child: ElevatedButton(
+          child: Text("login"),
+          onPressed: () {
+            Navigator.of(context).pushNamed("/login");
+          },
         ),
       ),
       backgroundColor: light,

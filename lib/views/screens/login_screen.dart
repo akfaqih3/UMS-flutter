@@ -69,6 +69,7 @@ class LoginScreen extends StatelessWidget {
                           text: 'Login',
                           color: Color.fromARGB(255, 255, 95, 12),
                           onPressed: () {
+                            Navigator.of(context).pushNamed("/");
                             if (_formKey.currentState?.validate() ?? false) {
                               _formKey.currentState?.save();
                               _controller.login(username, password);
