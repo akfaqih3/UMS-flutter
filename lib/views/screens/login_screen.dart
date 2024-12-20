@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
               child: Container(
                 width: 300,
                 height: 400,
-                color: Colors.white ,
+                color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Form(
@@ -93,8 +93,10 @@ class CustomCard extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     path.moveTo(0, size.height * 0.1);
-    path.quadraticBezierTo(size.width * 0.25, size.height * 0.0, size.width * 0.5, size.height * 0.1);
-    path.quadraticBezierTo(size.width * 0.75, size.height * 0.2, size.width, size.height * 0.1);
+    path.quadraticBezierTo(size.width * 0.25, size.height * 0.0,
+        size.width * 0.5, size.height * 0.1);
+    path.quadraticBezierTo(
+        size.width * 0.75, size.height * 0.2, size.width, size.height * 0.1);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();

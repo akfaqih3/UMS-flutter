@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
-import 'presentation/screens/login_screen.dart';
+import 'views/screens/home_screen.dart';
+import 'helpers/constants.dart';
 
 void main() {
-  runApp(MaterialApp(
-    home: LoginScreen(),
-  ));
+  runApp(HomeApp());
 }
 
+class HomeApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: appName,
+      home: HomeScreen(),
+    );
+  }
+}
