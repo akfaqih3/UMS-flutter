@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lecture_2/config/route/router.dart';
+import 'package:lecture_2/config/route/routes.dart';
 import 'package:lecture_2/views/screens/login_screen.dart';
 import 'views/screens/home_screen.dart';
 import 'helpers/constants.dart';
@@ -8,15 +10,14 @@ void main() {
 }
 
 class HomeApp extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: appName,
-      routes: {
-        '/': (_) => HomeScreen(),
-        '/login': (_) => LoginScreen(),
-      },
+      initialRoute: Routes.home,
+      onGenerateRoute: MyRouter.generateRoute,
     );
   }
 }

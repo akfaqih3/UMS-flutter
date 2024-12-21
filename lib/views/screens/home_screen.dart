@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lecture_2/config/route/routes.dart';
 import '../../helpers/constants.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  // const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ElevatedButton(
           child: Text("login"),
           onPressed: () {
-            Navigator.of(context).pushNamed("/login");
+            Navigator.of(context).pushNamed(Routes.login);
           },
         ),
       ),

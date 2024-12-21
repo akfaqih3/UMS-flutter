@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lecture_2/config/route/routes.dart';
 import '../widgets/custom_button.dart';
 import '../../controllers/login_controller.dart';
 
@@ -69,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                           text: 'Login',
                           color: Color.fromARGB(255, 255, 95, 12),
                           onPressed: () {
-                            Navigator.of(context).pushNamed("/");
+                            Navigator.of(context).pushNamed(Routes.home);
                             if (_formKey.currentState?.validate() ?? false) {
                               _formKey.currentState?.save();
                               _controller.login(username, password);
