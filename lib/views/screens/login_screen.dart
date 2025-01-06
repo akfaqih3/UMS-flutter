@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:lecture_2/config/route/routes.dart';
-import '../widgets/custom_button.dart';
-import '../../controllers/login_controller.dart';
+import 'package:get/get.dart';
+import 'package:lecture_2/controllers/login_controller.dart';
+import 'package:lecture_2/views/widgets/custom_button.dart';
 
 class LoginScreen extends StatelessWidget {
-  final LoginController _controller = LoginController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    String username = '';
-    String password = '';
+    final LoginController _controller = Get.put(LoginController());
 
     return Scaffold(
       body: Center(
@@ -35,7 +36,7 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Username',
+                            labelText: 'email',
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
@@ -44,9 +45,7 @@ class LoginScreen extends StatelessWidget {
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            username = value ?? '';
-                          },
+                          controller: _emailController,
                         ),
                         SizedBox(height: 20),
                         TextFormField(
@@ -61,19 +60,19 @@ class LoginScreen extends StatelessWidget {
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            password = value ?? '';
-                          },
+                          controller: _passwordController,
                         ),
                         SizedBox(height: 20),
                         CustomButton(
-                          text: 'Login',
+                          text: 'login',
                           color: Color.fromARGB(255, 255, 95, 12),
                           onPressed: () {
-                            Navigator.of(context).pushNamed(Routes.home);
                             if (_formKey.currentState?.validate() ?? false) {
-                              _formKey.currentState?.save();
-                              _controller.login(username, password);
+                              _controller.login(_emailController.text,
+                                  _passwordController.text);
+                            } else {
+                              Get.snackbar(
+                                  'Error', 'Invalid username or password');
                             }
                           },
                         ),
