@@ -32,7 +32,8 @@ class DioClient {
             // Update the original request with the new token
             final String? newToken = await TokenStorage.getAccessToken();
             if (newToken != null) {
-              error.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+              error.requestOptions.headers['Authorization'] =
+                  'Bearer $newToken';
 
               // Retry the failed request
               final options = error.requestOptions;

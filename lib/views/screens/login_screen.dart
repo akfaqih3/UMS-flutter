@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lecture_2/config/route/routes.dart';
 import 'package:get/get.dart';
 import 'package:lecture_2/controllers/login_controller.dart';
+import 'package:lecture_2/helpers/constants.dart';
 import 'package:lecture_2/views/widgets/custom_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -63,19 +64,34 @@ class LoginScreen extends StatelessWidget {
                           controller: _passwordController,
                         ),
                         SizedBox(height: 20),
-                        CustomButton(
-                          text: 'login',
-                          color: Color.fromARGB(255, 255, 95, 12),
-                          onPressed: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              _controller.login(_emailController.text,
-                                  _passwordController.text);
-                            } else {
-                              Get.snackbar(
-                                  'Error', 'Invalid username or password');
-                            }
-                          },
-                        ),
+                        Obx(() {
+                          if (_controller.status.value == 'loading') {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: primaryColor,
+                              ),
+                            );
+                          }
+
+                          if (_controller.status.value == 'success') {
+                            return Icon(
+                              Icons.check,
+                              color: Colors.green,
+                              size: 48,
+                            );
+                          }
+
+                          return CustomButton(
+                            text: 'login',
+                            color: Color.fromARGB(255, 255, 95, 12),
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                _controller.login(_emailController.text,
+                                    _passwordController.text);
+                              }
+                            },
+                          );
+                        }),
                       ],
                     ),
                   ),

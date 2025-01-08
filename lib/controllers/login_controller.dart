@@ -12,6 +12,7 @@ class LoginController extends GetxController {
   final ApiService _ApiService = ApiService();
   String? accessToken;
   String? refreshToken;
+  RxString status = 'login'.obs;
 
   @override
   void onInit() async {
@@ -25,6 +26,7 @@ class LoginController extends GetxController {
 
   Future<void> login(String email, String password) async {
     try {
+      status('loading');
       final response = await _ApiService.post(Endpoints.login,
           data: {"email": email, "password": password},
           options: Options(headers: {'Content-Type': 'application/json'}));
@@ -35,12 +37,15 @@ class LoginController extends GetxController {
         refreshToken = login.refreshToken;
         await TokenStorage.saveToken(accessToken!, refreshToken!);
         Get.snackbar('Success', 'Login Successful');
+        status('success');
         Get.offAll(() => HomeScreen());
       } else {
         Get.snackbar('Error', 'Invalid username or password');
       }
     } catch (e) {
       Get.snackbar('Error', 'Invalid username or password');
+    } finally {
+      status('login');
     }
   }
 

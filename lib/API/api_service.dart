@@ -18,4 +18,31 @@ class ApiService {
   Future<dynamic> get(String url) async {
     return await _client.dio.get(url);
   }
+
+  //dynamic put
+  Future<dynamic> put(String url, {Object? data, Options? options}) async {
+    Options _options = Options(
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    Response response = await _client.dio.put(
+      url,
+      data: data,
+      options: options,
+    );
+    return response;
+  }
+
+  Future<dynamic> delete(String url) async {
+    Options _options = Options(
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    return await _client.dio.delete(url);
+  }
 }

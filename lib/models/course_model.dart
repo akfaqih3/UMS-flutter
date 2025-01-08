@@ -3,7 +3,7 @@ class CourseModel {
   final String title;
   final String subject;
   final String overview;
-  final String? photo; // الحقل قابل لأن يكون null
+  final String? photo;
   final String createdAt;
 
   CourseModel({
@@ -18,7 +18,7 @@ class CourseModel {
   factory CourseModel.fromJson(Map<String, dynamic> json) {
     return CourseModel(
         id: json['id'],
-        title: json['title'] ,
+        title: json['title'],
         subject: json['subject'],
         overview: json['overview'],
         photo: json['photo'] ?? '',

@@ -5,6 +5,7 @@ import 'package:lecture_2/controllers/home_controller.dart';
 import 'package:lecture_2/controllers/login_controller.dart';
 import 'package:lecture_2/helpers/constants.dart';
 import 'package:lecture_2/config/constant/api_const.dart';
+import 'package:lecture_2/models/course_model.dart';
 import 'package:lecture_2/views/screens/courses_screen.dart';
 import 'package:lecture_2/views/screens/course_details_screen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -126,10 +127,33 @@ class CoursesScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            color: primaryColor,
-                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  _showAddCourseDialog(course);
+                                },
+                                child: Icon(
+                                  Icons.edit,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  _showDeleteCourseDialog(course.id);
+                                },
+                                child: Icon(
+                                  Icons.delete,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -142,7 +166,7 @@ class CoursesScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showAddCourseDialog();
+          _showAddCourseDialog(null);
         },
         child: const Icon(Icons.add),
         backgroundColor: primaryColor,
@@ -153,13 +177,20 @@ class CoursesScreen extends StatelessWidget {
     );
   }
 
-  void _showAddCourseDialog() {
+  void _showAddCourseDialog(CourseModel? course) {
     var subjects = Get.find<HomeController>().subjects;
     final _formKey = GlobalKey<FormState>();
 
     var titleController = TextEditingController();
     var overviewController = TextEditingController();
     String selectedSubject = subjects.first.slug;
+    if (course != null) {
+      titleController.text = course.title;
+      overviewController.text = course.overview;
+      selectedSubject = subjects
+          .firstWhere((element) => element.title == course.subject)
+          .slug;
+    }
 
     Rx<File?> courseImage = Rx<File?>(null);
 
@@ -173,6 +204,7 @@ class CoursesScreen extends StatelessWidget {
 
     Get.defaultDialog(
       title: 'New Course',
+      backgroundColor: backgroundColor,
       content: Obx(() {
         return SingleChildScrollView(
           child: Form(
@@ -180,7 +212,7 @@ class CoursesScreen extends StatelessWidget {
             child: Column(
               children: [
                 DropdownButtonFormField<String>(
-                  value: subjects.isEmpty ? null : subjects.first.slug,
+                  value: selectedSubject,
                   items: subjects
                       .map((e) => DropdownMenuItem(
                             value: e.slug,
@@ -197,7 +229,9 @@ class CoursesScreen extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: titleController,
-                  decoration: InputDecoration(labelText: 'Title'),
+                  decoration: (course == null)
+                      ? InputDecoration(labelText: 'Title')
+                      : null,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a course name';
@@ -209,7 +243,10 @@ class CoursesScreen extends StatelessWidget {
                   },
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Overview'),
+                  controller: overviewController,
+                  decoration: (course == null)
+                      ? InputDecoration(labelText: 'Overview')
+                      : null,
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -224,7 +261,8 @@ class CoursesScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _pickImage,
-                  child: Text('Choose Course photo'),
+                  child: Text(
+                      (course == null) ? 'Choose Course photo' : 'edit photo'),
                 ),
                 Obx(() {
                   return courseImage.value == null
@@ -242,10 +280,8 @@ class CoursesScreen extends StatelessWidget {
         );
       }),
       textCancel: 'Cancel',
-      textConfirm: 'Save',
-      onCancel: () {
-        Get.back();
-      },
+      textConfirm: (course == null) ? 'Add' : 'Update',
+      onCancel: () {},
       onConfirm: () {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
@@ -254,15 +290,38 @@ class CoursesScreen extends StatelessWidget {
             return;
           }
 
-          _controller.addCourse(
-            title: titleController.text,
-            overview: overviewController.text,
-            subject: selectedSubject,
-            photo: courseImage.value,
-          );
-
+          if (course == null) {
+            _controller.addCourse(
+              title: titleController.text,
+              overview: overviewController.text,
+              subject: selectedSubject,
+              photo: courseImage.value,
+            );
+          } else {
+            _controller.updateCourse(
+              course.id,
+              title: titleController.text,
+              overview: overviewController.text,
+              subject: selectedSubject,
+              photo: courseImage.value,
+            );
+          }
           Get.back();
         }
+      },
+    );
+  }
+
+  void _showDeleteCourseDialog(int courseId) {
+    Get.defaultDialog(
+      title: 'Delete Course',
+      content: Text('Are you sure you want to delete this course?'),
+      textCancel: 'Cancel',
+      textConfirm: 'Delete',
+      onCancel: () {},
+      onConfirm: () {
+        _controller.deleteCourse(courseId);
+        Get.back();
       },
     );
   }
