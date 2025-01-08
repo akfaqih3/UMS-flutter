@@ -80,27 +80,31 @@ class CoursesScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              "${baseUrl + course.photo!}",
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    // color: primaryColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.error,
-                                    color: primaryColor,
-                                  ),
-                                );
-                              },
+                          Material(
+                            elevation: 2,
+                            borderRadius: BorderRadius.circular(8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                "${baseUrl + course.photo!}",
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      // color: primaryColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.image_not_supported_rounded,
+                                      color: primaryColor,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -180,10 +184,12 @@ class CoursesScreen extends StatelessWidget {
   void _showAddCourseDialog(CourseModel? course) {
     var subjects = Get.find<HomeController>().subjects;
     final _formKey = GlobalKey<FormState>();
+    Rx<File?> courseImage = Rx<File?>(null);
 
     var titleController = TextEditingController();
     var overviewController = TextEditingController();
     String selectedSubject = subjects.first.slug;
+
     if (course != null) {
       titleController.text = course.title;
       overviewController.text = course.overview;
@@ -191,8 +197,6 @@ class CoursesScreen extends StatelessWidget {
           .firstWhere((element) => element.title == course.subject)
           .slug;
     }
-
-    Rx<File?> courseImage = Rx<File?>(null);
 
     Future<void> _pickImage() async {
       final pickedFile =
@@ -265,14 +269,33 @@ class CoursesScreen extends StatelessWidget {
                       (course == null) ? 'Choose Course photo' : 'edit photo'),
                 ),
                 Obx(() {
-                  return courseImage.value == null
-                      ? Text('No image selected')
-                      : Image.file(
+                  return courseImage.value != null
+                      ? Image.file(
                           courseImage.value!,
                           height: 100,
                           width: 100,
                           fit: BoxFit.cover,
-                        );
+                        )
+                      : course != null && course.photo != null
+                          ? Image.network(
+                              key: ValueKey(course.photo),
+                              "${baseUrl + course.photo!}",
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    // color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text("No image available"),
+                                );
+                              },
+                            )
+                          : Text('No image selected');
                 }),
               ],
             ),

@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:lecture_2/models/course_model.dart';
 import 'package:lecture_2/API/api_service.dart';
 import 'package:lecture_2/config/constant/api_const.dart';
-import 'dart:io';
 
 class CourseController extends GetxController {
   final ApiService _apiService = ApiService();
@@ -61,11 +62,33 @@ class CourseController extends GetxController {
     required String subject,
     File? photo,
   }) async {
+    var data;
+    dio.Options options =
+        dio.Options(headers: {'Content-Type': 'application/json'});
     try {
       isLoading(true);
 
+      if (photo != null) {
+        data = dio.FormData.fromMap({
+          "subject": subject,
+          "title": title,
+          "overview": overview,
+          "photo": dio.MultipartFile.fromFileSync(
+            photo.path,
+            filename: photo.path.split(Platform.pathSeparator).last,
+          ),
+        });
+        options = dio.Options(headers: {'Content-Type': 'multipart/form-data'});
+      } else {
+        data = dio.FormData.fromMap({
+          "subject": subject,
+          "title": title,
+          "overview": overview,
+        });
+      }
+
       final response = await _apiService.post(Endpoints.courseCreate,
-          data: {"subject": subject, "title": title, "overview": overview});
+          data: data, options: options);
       if (response.statusCode == 201) {
         Get.snackbar('Success', 'Course added successfully');
       } else {
@@ -87,12 +110,38 @@ class CourseController extends GetxController {
     required String subject,
     File? photo,
   }) async {
+    var data;
+    dio.Options options = dio.Options(
+      headers: {'method': 'PUT', 'Content-Type': 'application/json'},
+    );
     try {
       isLoading(true);
 
+      if (photo != null) {
+        data = dio.FormData.fromMap({
+          "subject": subject,
+          "title": title,
+          "overview": overview,
+          "photo": dio.MultipartFile.fromFileSync(
+            photo.path,
+            filename: photo.path.split(Platform.pathSeparator).last,
+          ),
+        });
+        options = dio.Options(
+          headers: {'method': 'PUT', 'Content-Type': 'multipart/form-data'},
+        );
+      } else {
+        data = dio.FormData.fromMap({
+          "subject": subject,
+          "title": title,
+          "overview": overview,
+        });
+      }
+
       final response = await _apiService.put(
           '${Endpoints.course}$courseId/update/',
-          data: {"subject": subject, "title": title, "overview": overview});
+          data: data,
+          options: options);
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Course updated successfully');
         Get.back();

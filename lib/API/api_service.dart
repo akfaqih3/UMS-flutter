@@ -6,6 +6,12 @@ class ApiService {
 
   //dyanamic post
   Future<dynamic> post(String url, {Object? data, Options? options}) async {
+    options ??= Options(
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    );
+
     Response response = await _client.dio.post(
       url,
       data: data,
@@ -21,12 +27,6 @@ class ApiService {
 
   //dynamic put
   Future<dynamic> put(String url, {Object? data, Options? options}) async {
-    Options _options = Options(
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
     Response response = await _client.dio.put(
       url,
       data: data,
