@@ -4,9 +4,10 @@ import 'package:lecture_2/controllers/home_controller.dart';
 import 'package:lecture_2/controllers/login_controller.dart';
 import 'package:lecture_2/helpers/constants.dart';
 import 'package:lecture_2/config/constant/api_const.dart';
+import 'package:lecture_2/views/screens/courses_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  final HomeController controller = Get.put(HomeController());
+  final HomeController controller = Get.put(HomeController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,18 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         elevation: 10,
         shadowColor: primaryColor.withOpacity(0.5),
+        actions: [
+          IconButton(
+            onPressed: () {
+              var logoutController = Get.find<LoginController>();
+              logoutController.logout();
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: backgroundColor,
+            ),
+          ),
+        ],
       ),
       body: Container(
         margin: EdgeInsets.only(top: 10),
@@ -68,13 +81,7 @@ class HomeScreen extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15),
                     onTap: () {
-                      // Handle subject click
-                      Get.snackbar(
-                        subject.title,
-                        "Total courses: ${subject.coursestotal}",
-                        snackPosition: SnackPosition.TOP,
-                        backgroundColor: Colors.deepOrange[100],
-                      );
+                      Get.to(CoursesScreen());
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
